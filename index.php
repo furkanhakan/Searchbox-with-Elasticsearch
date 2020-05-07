@@ -88,16 +88,18 @@ if ( $query->rowCount() ){
         <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
         <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.16.0/umd/popper.min.js"></script>
         <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.4.1/js/bootstrap.min.js"></script>
-<script src="https://twitter.github.io/typeahead.js/releases/latest/typeahead.bundle.js"></script>
     </head>
     <body>
         <div class="container">
-            <div class="form-group">
+            <div class="form-group dropdown">
                 <label class="form-controle"> Search</label>
-                <input type="text" class="form-control" id="search" placeholder="Search..." onkeyup="getname(this.value);" name="typeahead">
-            </div>
+                <input type="text" class="form-control" id="search" placeholder="Search..." data-toggle="dropdown" onkeyup="getname(this.value);">
+                <div class="dropdown-menu" aria-labelledby="dropdownMenuButton" id="result" style="display: none;">
 
+                </div>
+            </div>
             <p id="txtHint""></p>
+
         </div>
 
     </body>
@@ -106,17 +108,21 @@ if ( $query->rowCount() ){
 <script>
     function getname(str) {
         if (str.length == 0) {
-            document.getElementById("txtHint").innerHTML = "";
+            $('#result').hide();
             return;
         } else {
-            var xmlhttp = new XMLHttpRequest();
-            xmlhttp.onreadystatechange = function() {
-                if (this.readyState == 4 && this.status == 200) {
-                    document.getElementById("txtHint").innerHTML = this.responseText;
+            $('#result').show();
+            $('#result').html('');
+            $.ajax({
+                url:'gethint.php',
+                method:'post',
+                data:{search:str},
+                dataType:'text',
+                success:function (data) {
+                    $('#result').html(data);
                 }
-            };
-            xmlhttp.open("GET", "gethint.php?q=" + str, true);
-            xmlhttp.send();
+            });
         }
     }
+
 </script>

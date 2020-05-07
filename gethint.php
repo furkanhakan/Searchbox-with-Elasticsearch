@@ -3,7 +3,7 @@ require 'vendor/autoload.php';
 use Elasticsearch\ClientBuilder;
 $client = ClientBuilder::create()->build();
 
-$name = $_REQUEST["q"];
+$name = $_POST['search'];
 $hint = "";
 
 
@@ -19,10 +19,8 @@ $searchdata = [
 ];
 
 $response = $client->search($searchdata);
+$output='';
 for ($i = 0; $i < count($response['hits']['hits']); $i++){
-    if ($hint==="")
-        $hint = $response['hits']['hits'][$i]['_source']['name'];
-    else
-        $hint .= ",".$response['hits']['hits'][$i]['_source']['name'];
+    $output .= "<a class=\"dropdown-item\">".$response['hits']['hits'][$i]['_source']['name']."</a>";
 }
-echo $hint === "" ? "no suggestion" : $hint;
+echo $output === "" ? "no suggestion" : $output;
